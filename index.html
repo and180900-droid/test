@@ -1,0 +1,1114 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LUMIÈRE - 빛나는 피부, 매일의 의식</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#FAF7F2;
+  --dark:#2D2926;
+  --panel:#F2EDE6;
+  --rose:#C9956B;
+  --rose-d:#8B5E3C;
+  --rose-l:#E8C5A8;
+  --text:#2D2926;
+  --muted:#6B6259;
+  --border:#E0D8CF;
+  --white:#FFFFFF;
+}
+body{font-family:'Montserrat',sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden}
+a{cursor:pointer;text-decoration:none}
+
+/* NAV */
+#main-nav{position:fixed;top:0;left:0;right:0;z-index:200;background:rgba(250,247,242,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);transition:all .3s}
+.nav-inner{max-width:1280px;margin:0 auto;display:flex;align-items:center;padding:.9rem 2rem;gap:2rem}
+.logo{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:600;letter-spacing:.15em;cursor:pointer;flex-shrink:0}
+.logo span{color:var(--rose)}
+.nav-links{display:flex;list-style:none;gap:2rem;flex:1;justify-content:center}
+.nav-links a{font-size:.65rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);transition:color .2s;cursor:pointer}
+.nav-links a:hover{color:var(--rose)}
+.nav-right{display:flex;gap:.7rem;align-items:center}
+.nav-btn{font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;padding:.5rem 1.1rem;cursor:pointer;font-family:inherit;transition:all .2s;border:1px solid var(--dark);background:transparent;color:var(--dark)}
+.nav-btn:hover{background:var(--dark);color:#fff}
+.nav-btn.outline{background:transparent}
+.hamburger{display:none;background:none;border:none;font-size:1.3rem;cursor:pointer;color:var(--text)}
+.mobile-menu{display:none;flex-direction:column;padding:.5rem 2rem 1rem;gap:.5rem;border-top:1px solid var(--border)}
+.mobile-menu a{font-size:.72rem;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);padding:.5rem 0;cursor:pointer}
+.mobile-menu.open{display:flex}
+
+/* PAGES */
+.page{display:none;min-height:100vh;padding-top:62px}
+.page.active{display:block}
+
+/* TOAST */
+.toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(80px);background:var(--dark);color:#fff;padding:.75rem 1.5rem;font-size:.72rem;letter-spacing:.08em;z-index:9999;opacity:0;transition:all .35s;pointer-events:none;white-space:nowrap}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+
+/* CART FLOAT */
+.cart-float{position:fixed;bottom:2rem;right:2rem;width:52px;height:52px;background:var(--dark);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1rem;cursor:pointer;z-index:190;box-shadow:0 4px 20px rgba(0,0,0,.25);transition:transform .2s}
+.cart-float:hover{transform:scale(1.08)}
+#cart-count{font-size:.65rem;font-family:'Montserrat',sans-serif;margin-left:2px}
+
+/* CART DRAWER */
+.cart-overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:300;display:none}
+.cart-overlay.open{display:block}
+.cart-drawer{position:fixed;right:0;top:0;bottom:0;width:360px;max-width:95vw;background:#fff;z-index:301;transform:translateX(100%);transition:transform .35s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column}
+.cart-drawer.open{transform:translateX(0)}
+.cart-header{display:flex;justify-content:space-between;align-items:center;padding:1.2rem 1.5rem;border-bottom:1px solid var(--border)}
+.cart-header h3{font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:400}
+.cart-header button{background:none;border:none;font-size:1.1rem;cursor:pointer;color:var(--muted)}
+.cart-items{flex:1;overflow-y:auto;padding:1rem 1.5rem}
+.cart-empty{text-align:center;padding:3rem 0;color:var(--muted);font-size:.75rem}
+.cart-item{display:flex;gap:1rem;padding:.8rem 0;border-bottom:1px solid var(--border)}
+.cart-item-img{width:56px;height:56px;object-fit:cover;background:var(--panel);display:flex;align-items:center;justify-content:center;font-size:1.5rem;flex-shrink:0;border:1px solid var(--border)}
+.cart-item-info{flex:1}
+.cart-item-name{font-size:.78rem;font-weight:500;margin-bottom:.2rem}
+.cart-item-price{font-size:.72rem;color:var(--rose)}
+.cart-item-qty{display:flex;align-items:center;gap:.5rem;margin-top:.4rem}
+.qty-mini{background:none;border:1px solid var(--border);width:22px;height:22px;cursor:pointer;font-size:.8rem;display:flex;align-items:center;justify-content:center}
+.cart-item-remove{background:none;border:none;color:var(--muted);cursor:pointer;font-size:.8rem;margin-left:auto;align-self:flex-start}
+.cart-footer{padding:1rem 1.5rem;border-top:1px solid var(--border)}
+.cart-total{display:flex;justify-content:space-between;margin-bottom:1rem;font-size:.8rem}
+.cart-total strong{color:var(--rose);font-size:.9rem}
+
+/* HERO */
+.hero{position:relative;height:92vh;min-height:520px;overflow:hidden}
+.hero-slides{position:absolute;inset:0;display:flex;transition:transform .7s cubic-bezier(.4,0,.2,1)}
+.hero-slide{min-width:100%;height:100%;display:flex;align-items:center;padding:3rem 2rem;position:relative;overflow:hidden}
+.slide-bg{position:absolute;inset:0;z-index:0}
+.slide-bg img{width:100%;height:100%;object-fit:cover}
+.slide-overlay{position:absolute;inset:0;background:linear-gradient(135deg,rgba(15,14,13,.75) 40%,rgba(15,14,13,.2))}
+.slide-content{position:relative;z-index:2;max-width:560px;margin:0 auto;text-align:center;color:#fff}
+.slide-tag{font-size:.6rem;letter-spacing:.3em;text-transform:uppercase;color:var(--rose-l);display:block;margin-bottom:1rem}
+.slide-emoji{font-size:3.5rem;display:block;margin-bottom:1rem;line-height:1}
+.slide-title{font-family:'Cormorant Garamond',serif;font-size:clamp(2.2rem,5vw,3.8rem);font-weight:300;line-height:1.15;margin-bottom:1.2rem}
+.slide-title em{color:var(--rose-l);font-style:italic}
+.slide-desc{font-size:.78rem;letter-spacing:.05em;color:rgba(255,255,255,.75);line-height:1.8;margin-bottom:2rem}
+.slide-cta{display:inline-block;padding:.85rem 2.5rem;background:var(--rose);color:#fff;font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;cursor:pointer;transition:background .2s;border:none;font-family:inherit}
+.slide-cta:hover{background:var(--rose-d)}
+.hero-arrow{position:absolute;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);color:#fff;width:44px;height:44px;font-size:1.1rem;cursor:pointer;z-index:10;transition:background .2s;backdrop-filter:blur(4px)}
+.hero-arrow:hover{background:rgba(255,255,255,.25)}
+.hero-arrow.left{left:1.5rem}
+.hero-arrow.right{right:1.5rem}
+.hero-dots{position:absolute;bottom:1.5rem;left:50%;transform:translateX(-50%);display:flex;gap:.5rem;z-index:10}
+.hero-dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.35);cursor:pointer;transition:all .25s}
+.hero-dot.active{background:#fff;width:20px;border-radius:3px}
+
+/* MARQUEE */
+.marquee-wrap{overflow:hidden;background:var(--dark);color:#fff;padding:.6rem 0}
+.marquee-track{display:flex;gap:0;white-space:nowrap;animation:marquee 28s linear infinite}
+@keyframes marquee{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+.marquee-item{font-size:.58rem;letter-spacing:.25em;text-transform:uppercase;padding:0 2rem;color:rgba(255,255,255,.6)}
+.marquee-item span{color:var(--rose);margin-right:2rem}
+
+/* CATEGORY STRIP */
+.cat-strip{background:#fff;border-bottom:1px solid var(--border);position:sticky;top:62px;z-index:100}
+.cat-inner{max-width:1280px;margin:0 auto;padding:.8rem 2rem;display:flex;gap:.5rem;overflow-x:auto;scrollbar-width:none}
+.cat-inner::-webkit-scrollbar{display:none}
+.cat-pill{padding:.45rem 1.1rem;font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;background:transparent;border:1px solid var(--border);color:var(--muted);cursor:pointer;font-family:inherit;transition:all .2s;white-space:nowrap}
+.cat-pill:hover,.cat-pill.active{background:var(--dark);color:#fff;border-color:var(--dark)}
+
+/* SECTION HEADERS */
+.section-header{max-width:1280px;margin:4rem auto 2rem;padding:0 2rem;text-align:center}
+.section-tag{font-size:.58rem;letter-spacing:.28em;text-transform:uppercase;color:var(--rose);display:block;margin-bottom:.7rem}
+.section-title{font-family:'Cormorant Garamond',serif;font-size:clamp(1.8rem,3vw,2.6rem);font-weight:300;line-height:1.2;margin-bottom:.8rem}
+.section-title em{color:var(--rose);font-style:italic}
+.section-sub{font-size:.73rem;color:var(--muted);letter-spacing:.04em}
+
+/* PRODUCT GRID */
+.products-section{max-width:1280px;margin:0 auto;padding:0 2rem 4rem}
+.prod-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:1.5rem}
+.prod-card{background:#fff;border:1px solid var(--border);cursor:pointer;transition:transform .2s,box-shadow .2s;position:relative;overflow:hidden}
+.prod-card:hover{transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,0,0,.1)}
+.prod-img{height:240px;overflow:hidden;position:relative;background:var(--panel);display:flex;align-items:center;justify-content:center}
+.prod-img img{width:100%;height:100%;object-fit:cover;transition:transform .5s}
+.prod-card:hover .prod-img img{transform:scale(1.06)}
+.prod-emoji-display{font-size:4rem;line-height:1}
+.prod-badge{position:absolute;top:.7rem;left:.7rem;font-size:.52rem;letter-spacing:.15em;text-transform:uppercase;padding:.3rem .7rem;background:var(--rose);color:#fff}
+.prod-info{padding:1rem 1.2rem 1.2rem}
+.prod-cat{font-size:.55rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:.4rem}
+.prod-name{font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:400;margin-bottom:.2rem}
+.prod-sub{font-size:.68rem;color:var(--muted);margin-bottom:.7rem;line-height:1.5}
+.prod-price-row{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap}
+.prod-price{font-size:.9rem;font-weight:600;color:var(--dark)}
+.prod-orig{font-size:.72rem;color:var(--muted);text-decoration:line-through}
+.prod-disc{font-size:.65rem;color:var(--rose);font-weight:500}
+.prod-add{position:absolute;bottom:0;left:0;right:0;padding:.65rem;background:var(--dark);color:#fff;font-size:.6rem;letter-spacing:.15em;text-transform:uppercase;text-align:center;transform:translateY(100%);transition:transform .25s;cursor:pointer;border:none;font-family:inherit}
+.prod-card:hover .prod-add{transform:translateY(0)}
+.prod-stars{font-size:.68rem;color:var(--rose);margin-bottom:.4rem;letter-spacing:.04em}
+
+/* CURATION */
+.curation{background:var(--dark);color:#fff;margin:4rem 0}
+.curation-inner{max-width:1280px;margin:0 auto;display:grid;grid-template-columns:1fr 1.5fr;align-items:center;gap:4rem;padding:5rem 2rem}
+.cur-visual{display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative}
+.cur-orb{width:220px;height:220px;border-radius:50%;background:radial-gradient(circle,rgba(201,149,107,.3),rgba(201,149,107,.05));border:1px solid rgba(201,149,107,.2)}
+.cur-emoji{font-size:4rem;position:absolute}
+.cur-tag{font-size:.58rem;letter-spacing:.28em;text-transform:uppercase;color:var(--rose-l);display:block;margin-bottom:.8rem}
+.cur-title{font-family:'Cormorant Garamond',serif;font-size:2.6rem;font-weight:300;line-height:1.2;margin-bottom:1.2rem}
+.cur-title em{color:var(--rose-l);font-style:italic}
+.cur-body{font-size:.78rem;color:rgba(255,255,255,.65);line-height:1.9;margin-bottom:1.5rem}
+.cur-list{list-style:none;margin-bottom:2rem}
+.cur-list li{display:flex;justify-content:space-between;align-items:center;padding:.6rem 0;border-bottom:1px solid rgba(255,255,255,.08);font-size:.72rem;color:rgba(255,255,255,.75)}
+.cur-list li span{font-size:.58rem;letter-spacing:.15em;color:var(--rose-l)}
+.btn-primary{padding:.85rem 2.2rem;background:var(--rose);color:#fff;border:none;font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;cursor:pointer;font-family:inherit;transition:background .2s}
+.btn-primary:hover{background:var(--rose-d)}
+
+/* NEWS */
+.news-section{max-width:1280px;margin:0 auto;padding:0 2rem 5rem}
+.news-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1.5rem}
+.news-card{background:#fff;border:1px solid var(--border);overflow:hidden;cursor:pointer;transition:transform .2s}
+.news-card:hover{transform:translateY(-3px)}
+.news-img{height:180px;background:var(--panel);display:flex;align-items:center;justify-content:center;font-size:3.5rem;position:relative;overflow:hidden}
+.news-img img{width:100%;height:100%;object-fit:cover}
+.news-body{padding:1.2rem}
+.news-tag{font-size:.55rem;letter-spacing:.2em;text-transform:uppercase;color:var(--rose);margin-bottom:.5rem}
+.news-title{font-family:'Cormorant Garamond',serif;font-size:1.1rem;margin-bottom:.5rem;line-height:1.4}
+.news-date{font-size:.62rem;color:var(--muted)}
+
+/* FOOTER */
+footer{background:var(--dark);color:#FAF7F2;padding:4rem 0 1.5rem}
+.footer-inner{max-width:1280px;margin:0 auto;padding:0 2rem}
+.footer-top{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;gap:3rem;margin-bottom:3rem}
+.footer-logo{font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:600;letter-spacing:.15em;margin-bottom:1rem}
+.footer-logo span{color:var(--rose)}
+.footer-desc{font-size:.7rem;color:rgba(255,255,255,.45);line-height:1.9;margin-bottom:.8rem}
+.footer-biz{font-size:.62rem;color:rgba(255,255,255,.3);line-height:1.8}
+.footer-col h4{font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.45);margin-bottom:1rem}
+.footer-col ul{list-style:none}
+.footer-col ul li{font-size:.7rem;color:rgba(255,255,255,.35);padding:.3rem 0;cursor:pointer;transition:color .2s}
+.footer-col ul li:hover{color:var(--rose-l)}
+.footer-contact p{font-size:.7rem;color:rgba(255,255,255,.45);margin-bottom:.3rem}
+.footer-bottom{border-top:1px solid rgba(255,255,255,.08);padding-top:1.2rem;display:flex;justify-content:space-between;align-items:center;font-size:.6rem;color:rgba(255,255,255,.25)}
+
+/* PRODUCTS PAGE */
+.page-hero{background:var(--dark);color:#fff;padding:5rem 2rem 3rem;text-align:center}
+.page-hero h1{font-family:'Cormorant Garamond',serif;font-size:2.8rem;font-weight:300;margin-bottom:.5rem}
+.page-hero p{font-size:.75rem;color:rgba(255,255,255,.55);letter-spacing:.08em}
+.filter-bar{background:#fff;border-bottom:1px solid var(--border);position:sticky;top:62px;z-index:99}
+.filter-inner{max-width:1280px;margin:0 auto;padding:.8rem 2rem;display:flex;gap:.5rem;overflow-x:auto;scrollbar-width:none}
+.filter-tab{padding:.45rem 1.1rem;font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;background:transparent;border:1px solid var(--border);color:var(--muted);cursor:pointer;font-family:inherit;transition:all .2s;white-space:nowrap}
+.filter-tab:hover,.filter-tab.active{background:var(--dark);color:#fff;border-color:var(--dark)}
+.products-main{max-width:1280px;margin:0 auto;padding:2rem}
+.products-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem}
+.products-count{font-size:.72rem;color:var(--muted)}
+.sort-select{padding:.45rem .9rem;border:1px solid var(--border);background:#fff;font-size:.7rem;font-family:inherit;color:var(--text);outline:none;cursor:pointer}
+.all-prod-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:1.5rem}
+
+/* DETAIL PAGE */
+.detail-inner{max-width:1180px;margin:0 auto;padding:2rem}
+.back-btn{background:none;border:1px solid var(--border);padding:.5rem 1.1rem;font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;font-family:inherit;color:var(--muted);margin-bottom:2rem;transition:all .2s}
+.back-btn:hover{border-color:var(--dark);color:var(--dark)}
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:3rem}
+.detail-main-img{height:420px;background:var(--panel);display:flex;align-items:center;justify-content:center;font-size:6rem;margin-bottom:1rem;border:1px solid var(--border);overflow:hidden}
+.detail-main-img img{width:100%;height:100%;object-fit:cover}
+.detail-thumbs{display:flex;gap:.6rem}
+.detail-thumb{width:64px;height:64px;background:var(--panel);border:1px solid var(--border);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1.5rem;overflow:hidden;transition:border-color .2s}
+.detail-thumb:hover,.detail-thumb.active{border-color:var(--rose)}
+.detail-thumb img{width:100%;height:100%;object-fit:cover}
+.breadcrumb{font-size:.6rem;color:var(--muted);letter-spacing:.1em;margin-bottom:.7rem}
+.detail-info h1{font-family:'Cormorant Garamond',serif;font-size:2.2rem;font-weight:300;margin-bottom:.4rem}
+.sub-title{font-size:.75rem;color:var(--muted);letter-spacing:.04em;margin-bottom:1.2rem}
+.detail-price-area{display:flex;align-items:baseline;gap:.7rem;margin-bottom:.7rem}
+.detail-price{font-size:1.6rem;font-weight:600;color:var(--dark)}
+.detail-original{font-size:.9rem;color:var(--muted);text-decoration:line-through}
+.detail-discount{font-size:.75rem;color:var(--rose);font-weight:600}
+.detail-stars{font-size:.78rem;color:var(--rose);margin-bottom:1rem}
+.detail-divider{border:none;border-top:1px solid var(--border);margin:1.2rem 0}
+.detail-opts h3{font-size:.6rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:.6rem}
+.opt-row{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1.1rem}
+.opt-btn{padding:.4rem .9rem;border:1px solid var(--border);background:transparent;font-size:.68rem;cursor:pointer;font-family:inherit;transition:all .2s}
+.opt-btn:hover,.opt-btn.active{border-color:var(--dark);background:var(--dark);color:#fff}
+.qty-row{display:flex;align-items:center;gap:0;margin-bottom:1.2rem;border:1px solid var(--border);width:fit-content}
+.qty-btn{width:36px;height:36px;background:none;border:none;font-size:1.1rem;cursor:pointer;color:var(--dark);transition:background .2s}
+.qty-btn:hover{background:var(--panel)}
+.qty-val{width:44px;height:36px;border:none;border-left:1px solid var(--border);border-right:1px solid var(--border);text-align:center;font-size:.82rem;font-family:inherit;outline:none}
+.detail-cta{display:flex;gap:.8rem;margin-bottom:1.5rem}
+.btn-cart{flex:1;padding:.9rem;background:#fff;border:2px solid var(--dark);color:var(--dark);font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;cursor:pointer;font-family:inherit;transition:all .2s}
+.btn-cart:hover{background:var(--dark);color:#fff}
+.btn-buy{flex:1;padding:.9rem;background:var(--rose);border:none;color:#fff;font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;cursor:pointer;font-family:inherit;transition:background .2s}
+.btn-buy:hover{background:var(--rose-d)}
+.detail-perks{display:grid;grid-template-columns:1fr 1fr;gap:.6rem}
+.perk{font-size:.68rem;color:var(--muted);display:flex;align-items:center;gap:.4rem}
+.detail-desc{margin-top:2rem;padding-top:2rem;border-top:1px solid var(--border);grid-column:1/-1}
+.detail-desc h3,.detail-desc h4{font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:400;margin:1rem 0 .5rem;color:var(--dark)}
+.detail-desc p{font-size:.78rem;color:var(--muted);line-height:1.9;margin-bottom:.7rem}
+.detail-desc ul,.detail-desc ol{padding-left:1.4rem;margin:.5rem 0}
+.detail-desc li{font-size:.78rem;color:var(--muted);line-height:1.8}
+.detail-desc strong{color:var(--dark)}
+.detail-desc hr{border:none;border-top:1px solid var(--border);margin:1rem 0}
+
+/* REVIEWS */
+.detail-reviews{margin-top:2rem;padding-top:2rem;border-top:1px solid var(--border)}
+.rv-summary{display:flex;align-items:center;gap:2rem;margin-bottom:1.5rem;padding:1.2rem;background:var(--panel);border:1px solid var(--border)}
+.rv-score-big{font-family:'Cormorant Garamond',serif;font-size:3rem;font-weight:300;color:var(--dark);line-height:1}
+.rv-stars-big{font-size:1.1rem;color:var(--rose);letter-spacing:.1em}
+.rv-count{font-size:.65rem;color:var(--muted)}
+.rv-card{background:#fff;border:1px solid var(--border);padding:1rem 1.2rem;margin-bottom:.8rem}
+.rv-header{display:flex;justify-content:space-between;margin-bottom:.3rem}
+.rv-name{font-size:.75rem;font-weight:500}
+.rv-date{font-size:.62rem;color:var(--muted)}
+.rv-stars{font-size:.82rem;color:var(--rose);letter-spacing:.05em;margin-bottom:.4rem}
+.rv-text{font-size:.73rem;color:var(--muted);line-height:1.7}
+
+/* AUTH PAGES */
+.auth-wrap{display:grid;grid-template-columns:1fr 1.2fr;min-height:calc(100vh - 62px)}
+.auth-visual{background:var(--dark);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;text-align:center;padding:3rem;color:#fff;position:relative;overflow:hidden}
+.auth-visual-orb{width:280px;height:280px;border-radius:50%;background:radial-gradient(circle,rgba(201,149,107,.25),rgba(201,149,107,.02));border:1px solid rgba(201,149,107,.15);position:absolute}
+.auth-visual-emoji{font-size:3.5rem;position:relative;z-index:1}
+.auth-visual h2{font-family:'Cormorant Garamond',serif;font-size:1.8rem;font-weight:300;line-height:1.4;position:relative;z-index:1}
+.auth-visual p{font-size:.72rem;color:rgba(255,255,255,.5);line-height:1.8;position:relative;z-index:1}
+.auth-form-wrap{display:flex;align-items:center;justify-content:center;padding:2rem;background:#fff}
+.auth-form-inner{width:100%;max-width:420px}
+.auth-title{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:300;margin-bottom:.4rem}
+.auth-sub{font-size:.7rem;color:var(--muted);margin-bottom:2rem;line-height:1.7}
+.form-2col{display:grid;grid-template-columns:1fr 1fr;gap:.8rem}
+.form-row{margin-bottom:1rem}
+.form-row label{display:block;font-size:.58rem;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-bottom:.4rem}
+.form-row input,.form-row select{width:100%;padding:.7rem .9rem;border:1px solid var(--border);background:#fff;font-size:.8rem;font-family:inherit;outline:none;transition:border-color .2s}
+.form-row input:focus,.form-row select:focus{border-color:var(--rose)}
+.form-check{display:flex;align-items:center;gap:.6rem;margin-bottom:.6rem;font-size:.72rem;color:var(--muted)}
+.submit-btn{width:100%;padding:.9rem;background:var(--dark);color:#fff;border:none;font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;cursor:pointer;font-family:inherit;transition:background .2s;margin-top:1rem}
+.submit-btn:hover{background:var(--rose)}
+.success-msg{display:none;text-align:center;font-size:.75rem;color:var(--rose);margin-top:1rem;padding:.8rem;background:rgba(201,149,107,.08);border:1px solid rgba(201,149,107,.2)}
+.auth-switch{font-size:.7rem;color:var(--muted);text-align:center;margin-top:1.2rem}
+.auth-switch a{color:var(--rose);cursor:pointer;text-decoration:underline}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  .nav-links,.nav-right{display:none}
+  .hamburger{display:block}
+  .hero{height:75vh}
+  .curation-inner{grid-template-columns:1fr;gap:2rem;padding:3rem 1.5rem}
+  .cur-visual{display:none}
+  .footer-top{grid-template-columns:1fr 1fr}
+  .detail-grid{grid-template-columns:1fr}
+  .auth-visual{display:none}
+  .auth-wrap{grid-template-columns:1fr}
+  .stats-row{grid-template-columns:1fr 1fr}
+}
+@media(max-width:600px){
+  .prod-grid,.all-prod-grid{grid-template-columns:repeat(2,1fr);gap:1rem}
+  .prod-img{height:180px}
+  .footer-top{grid-template-columns:1fr}
+  .form-2col{grid-template-columns:1fr}
+  .detail-perks{grid-template-columns:1fr}
+  .nav-inner{padding:.9rem 1.2rem}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="main-nav">
+  <div class="nav-inner">
+    <div class="logo" onclick="showPage('home')">LUMIÈRE<span>•</span></div>
+    <ul class="nav-links">
+      <li><a onclick="showPage('home')">홈</a></li>
+      <li><a onclick="showPage('products')">전체 제품</a></li>
+      <li><a onclick="showPage('products','스킨케어')">스킨케어</a></li>
+      <li><a onclick="showPage('products','메이크업')">메이크업</a></li>
+      <li><a onclick="showPage('products','바디케어')">바디케어</a></li>
+    </ul>
+    <div class="nav-right">
+      <button class="nav-btn outline" onclick="showPage('login')">로그인</button>
+      <button class="nav-btn" onclick="showPage('signup')">회원가입</button>
+    </div>
+    <button class="hamburger" id="hamburger" onclick="toggleMobile()">☰</button>
+  </div>
+  <div class="mobile-menu" id="mobile-menu">
+    <a onclick="showPage('home');toggleMobile()">홈</a>
+    <a onclick="showPage('products');toggleMobile()">전체 제품</a>
+    <a onclick="showPage('products','스킨케어');toggleMobile()">스킨케어</a>
+    <a onclick="showPage('products','메이크업');toggleMobile()">메이크업</a>
+    <a onclick="showPage('products','바디케어');toggleMobile()">바디케어</a>
+    <a onclick="showPage('login');toggleMobile()">로그인</a>
+    <a onclick="showPage('signup');toggleMobile()">회원가입</a>
+  </div>
+</nav>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- CART FLOAT -->
+<div class="cart-float" id="cart-float" onclick="toggleCart()">
+  🛒 <span id="cart-count">0</span>
+</div>
+
+<!-- CART DRAWER -->
+<div class="cart-overlay" id="cart-overlay" onclick="toggleCart()"></div>
+<div class="cart-drawer" id="cart-drawer">
+  <div class="cart-header">
+    <h3>장바구니</h3>
+    <button onclick="toggleCart()">✕</button>
+  </div>
+  <div class="cart-items" id="cart-items"><p class="cart-empty">장바구니가 비어있습니다</p></div>
+  <div class="cart-footer" id="cart-footer" style="display:none">
+    <div class="cart-total">합계: <strong id="cart-total">₩0</strong></div>
+    <button class="btn-primary" style="width:100%" onclick="showToast('결제 페이지로 이동합니다 🛒')">결제하기</button>
+  </div>
+</div>
+
+<!-- HOME PAGE -->
+<div class="page active" id="page-home">
+  <!-- HERO -->
+  <div class="hero" id="hero">
+    <div class="hero-slides" id="hero-slides"></div>
+    <button class="hero-arrow left" onclick="changeSlide(-1)">&#8592;</button>
+    <button class="hero-arrow right" onclick="changeSlide(1)">&#8594;</button>
+    <div class="hero-dots" id="hero-dots"></div>
+  </div>
+
+  <!-- MARQUEE -->
+  <div class="marquee-wrap">
+    <div class="marquee-track" id="marquee-track"></div>
+  </div>
+
+  <!-- CATEGORY -->
+  <div class="cat-strip">
+    <div class="cat-inner">
+      <button class="cat-pill active" onclick="filterHomeCat(this,'전체')">전체 제품</button>
+      <button class="cat-pill" onclick="filterHomeCat(this,'스킨케어')">스킨케어</button>
+      <button class="cat-pill" onclick="filterHomeCat(this,'메이크업')">메이크업</button>
+      <button class="cat-pill" onclick="filterHomeCat(this,'바디케어')">바디케어</button>
+      <button class="cat-pill" onclick="filterHomeCat(this,'헤어케어')">헤어케어</button>
+      <button class="cat-pill" onclick="filterHomeCat(this,'선케어')">선케어</button>
+      <button class="cat-pill" onclick="filterHomeCat(this,'세트')">기획 세트</button>
+    </div>
+  </div>
+
+  <!-- BESTSELLERS -->
+  <div class="section-header">
+    <span class="section-tag" id="txt-bestseller-tag">Best Sellers</span>
+    <h2 class="section-title" id="txt-bestseller-title">지금 가장 <em>사랑받는</em> 제품</h2>
+    <p class="section-sub" id="txt-bestseller-sub">피부과 전문의가 인정한 LUMIÈRE의 시그니처 라인</p>
+  </div>
+  <div class="products-section">
+    <div class="prod-grid" id="home-prod-grid"></div>
+    <div style="text-align:center;margin-top:3rem">
+      <button class="btn-primary" onclick="showPage('products')">전체 제품 보기</button>
+    </div>
+  </div>
+
+  <!-- CURATION -->
+  <div class="curation">
+    <div class="curation-inner">
+      <div class="cur-visual">
+        <div class="cur-orb"></div>
+        <div class="cur-emoji" id="txt-curation-emoji">✨</div>
+      </div>
+      <div class="cur-content">
+        <span class="cur-tag" id="txt-curation-tag">My Skin Curation</span>
+        <h2 class="cur-title" id="txt-curation-title">나만을 위한<br><em>스킨케어 루틴</em></h2>
+        <p class="cur-body" id="txt-curation-body">피부 타입과 고민에 맞춰 전문가가 큐레이션한 나만의 루틴. 매일 반복되는 의식처럼, 피부를 가꾸는 시간을 특별하게 만들어드립니다.</p>
+        <ul class="cur-list">
+          <li>클렌징 <span>1단계</span></li>
+          <li>토너 / 에센스 <span>2단계</span></li>
+          <li>세럼 / 앰플 <span>3단계</span></li>
+          <li>모이스처라이저 <span>4단계</span></li>
+          <li>선크림 (데이타임) <span>5단계</span></li>
+        </ul>
+        <button class="btn-primary" onclick="showPage('products')">루틴 쇼핑하기</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- NEWS -->
+  <div class="section-header">
+    <span class="section-tag">News &amp; Events</span>
+    <h2 class="section-title">최신 <em>소식</em></h2>
+  </div>
+  <div class="news-section">
+    <div class="news-grid" id="news-grid"></div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-top">
+        <div>
+          <div class="footer-logo">LUMIÈRE<span>•</span></div>
+          <p class="footer-desc" id="txt-footer-desc">빛나는 피부, 매일의 의식.<br>자연과 과학이 만나 탄생한 프리미엄 화장품 브랜드</p>
+          <p class="footer-biz" id="txt-footer-biz">사업자 등록번호: 000-00-00000<br>대표이사: 홍길동<br>서울특별시 강남구 테헤란로 123</p>
+        </div>
+        <div class="footer-col">
+          <h4>제품</h4>
+          <ul>
+            <li onclick="showPage('products','스킨케어')">스킨케어</li>
+            <li onclick="showPage('products','메이크업')">메이크업</li>
+            <li onclick="showPage('products','바디케어')">바디케어</li>
+            <li onclick="showPage('products','세트')">기획 세트</li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>고객지원</h4>
+          <ul>
+            <li>공지사항</li><li>자주 묻는 질문</li><li>교환/환불 안내</li><li>배송 안내</li>
+          </ul>
+        </div>
+        <div class="footer-col footer-contact">
+          <h4>고객센터</h4>
+          <p><strong id="txt-footer-tel">02-1234-5678</strong></p>
+          <p>평일 10:00 – 18:00</p>
+          <p style="margin-top:.5rem" id="txt-footer-email">lumiere@beauty.co.kr</p>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© 2025 LUMIÈRE Beauty. All rights reserved.</span>
+        <div style="display:flex;gap:1.5rem"><span>이용약관</span><span>개인정보처리방침</span><span>환불정책</span></div>
+      </div>
+    </div>
+  </footer>
+</div>
+
+<!-- PRODUCTS PAGE -->
+<div class="page" id="page-products">
+  <div class="page-hero">
+    <h1 id="prod-page-title">전체 제품</h1>
+    <p>피부과 전문의가 엄선한 프리미엄 화장품 컬렉션</p>
+  </div>
+  <div class="filter-bar">
+    <div class="filter-inner">
+      <button class="filter-tab active" onclick="setFilter(this,'전체')">전체</button>
+      <button class="filter-tab" onclick="setFilter(this,'스킨케어')">스킨케어</button>
+      <button class="filter-tab" onclick="setFilter(this,'메이크업')">메이크업</button>
+      <button class="filter-tab" onclick="setFilter(this,'바디케어')">바디케어</button>
+      <button class="filter-tab" onclick="setFilter(this,'헤어케어')">헤어케어</button>
+      <button class="filter-tab" onclick="setFilter(this,'선케어')">선케어</button>
+      <button class="filter-tab" onclick="setFilter(this,'세트')">기획 세트</button>
+    </div>
+  </div>
+  <div class="products-main">
+    <div class="products-header">
+      <span class="products-count" id="prod-count"></span>
+      <select class="sort-select" onchange="sortProducts(this.value)">
+        <option value="popular">인기순</option>
+        <option value="low">낮은 가격순</option>
+        <option value="high">높은 가격순</option>
+        <option value="new">최신순</option>
+      </select>
+    </div>
+    <div class="all-prod-grid" id="all-prod-grid"></div>
+  </div>
+  <footer style="background:#2D2926;color:#FAF7F2;padding:2rem;text-align:center;font-size:.65rem;color:#6B6259">
+    © 2025 LUMIÈRE Beauty. All rights reserved.
+  </footer>
+</div>
+
+<!-- DETAIL PAGE -->
+<div class="page" id="page-detail">
+  <div class="detail-inner">
+    <button class="back-btn" onclick="goBack()">← 목록으로</button>
+    <div class="detail-grid">
+      <div class="detail-imgs">
+        <div class="detail-main-img" id="detail-main-img"></div>
+        <div class="detail-thumbs" id="detail-thumbs"></div>
+      </div>
+      <div class="detail-info">
+        <p class="breadcrumb">홈 / <span id="detail-cat">스킨케어</span> / <span id="detail-name-bc">제품</span></p>
+        <h1 id="detail-name">제품명</h1>
+        <p class="sub-title" id="detail-sub">서브타이틀</p>
+        <div class="detail-price-area">
+          <span class="detail-price" id="detail-price">₩0</span>
+          <span class="detail-original" id="detail-orig"></span>
+          <span class="detail-discount" id="detail-disc"></span>
+        </div>
+        <div class="detail-stars" id="detail-stars">★★★★★ <span style="color:var(--muted);font-size:.75rem">(0개 리뷰)</span></div>
+        <hr class="detail-divider">
+        <div class="detail-opts">
+          <h3>용량 선택</h3>
+          <div class="opt-row">
+            <button class="opt-btn active" onclick="selectOpt(this)">30ml</button>
+            <button class="opt-btn" onclick="selectOpt(this)">50ml</button>
+            <button class="opt-btn" onclick="selectOpt(this)">100ml</button>
+          </div>
+          <h3>피부 타입</h3>
+          <div class="opt-row">
+            <button class="opt-btn active" onclick="selectOpt(this)">건성</button>
+            <button class="opt-btn" onclick="selectOpt(this)">중성</button>
+            <button class="opt-btn" onclick="selectOpt(this)">지성</button>
+            <button class="opt-btn" onclick="selectOpt(this)">복합성</button>
+          </div>
+        </div>
+        <div class="qty-row">
+          <button class="qty-btn" onclick="changeQty(-1)">−</button>
+          <input class="qty-val" id="qty-val" value="1" readonly>
+          <button class="qty-btn" onclick="changeQty(1)">+</button>
+        </div>
+        <div class="detail-cta">
+          <button class="btn-cart" onclick="addToCartDetail()">장바구니 담기</button>
+          <button class="btn-buy" onclick="showToast('구매 페이지로 이동합니다')">바로 구매</button>
+        </div>
+        <div class="detail-perks">
+          <div class="perk"><span>🚚</span> 5만원 이상 무료배송</div>
+          <div class="perk"><span>↩️</span> 30일 이내 무료 반품</div>
+          <div class="perk"><span>🔒</span> 피부과 전문의 테스트 완료</div>
+          <div class="perk"><span>🌿</span> 비건 · 크루얼티 프리 인증</div>
+        </div>
+      </div>
+      <!-- Detail description + reviews span full width -->
+      <div class="detail-desc" id="detail-desc-content"></div>
+      <div class="detail-reviews" id="detail-reviews-section" style="grid-column:1/-1"></div>
+    </div>
+  </div>
+</div>
+
+<!-- SIGNUP PAGE -->
+<div class="page" id="page-signup">
+  <div class="auth-wrap">
+    <div class="auth-visual">
+      <div class="auth-visual-orb"></div>
+      <div class="auth-visual-emoji">🌸</div>
+      <h2>LUMIÈRE와 함께<br>빛나는 피부를</h2>
+      <p>회원 가입 시 3만원 쿠폰 증정<br>생일 특별 혜택 + 뉴스레터</p>
+    </div>
+    <div class="auth-form-wrap">
+      <div class="auth-form-inner">
+        <h2 class="auth-title">회원가입</h2>
+        <p class="auth-sub">LUMIÈRE의 프리미엄 멤버가 되어 특별한 혜택을 누리세요</p>
+        <div class="form-2col">
+          <div class="form-row"><label>이름 *</label><input type="text" placeholder="홍길동" id="f-name"></div>
+          <div class="form-row"><label>닉네임</label><input type="text" placeholder="닉네임" id="f-nick"></div>
+        </div>
+        <div class="form-row"><label>이메일 *</label><input type="email" placeholder="email@example.com" id="f-email"></div>
+        <div class="form-row"><label>비밀번호 *</label><input type="password" placeholder="8자 이상" id="f-pw"></div>
+        <div class="form-row"><label>비밀번호 확인 *</label><input type="password" placeholder="재입력" id="f-pw2"></div>
+        <div class="form-2col">
+          <div class="form-row"><label>생년월일</label><input type="date" id="f-birth"></div>
+          <div class="form-row"><label>피부 타입</label>
+            <select id="f-skin"><option value="">선택</option><option>건성</option><option>중성</option><option>지성</option><option>복합성</option><option>민감성</option></select>
+          </div>
+        </div>
+        <div class="form-check"><input type="checkbox" id="agree-all" onchange="toggleAll(this)"><label for="agree-all"><strong>전체 동의</strong></label></div>
+        <div class="form-check"><input type="checkbox" id="agree1"><label for="agree1">이용약관 동의 (필수)</label></div>
+        <div class="form-check"><input type="checkbox" id="agree2"><label for="agree2">개인정보 수집·이용 동의 (필수)</label></div>
+        <div class="form-check"><input type="checkbox" id="agree3"><label for="agree3">마케팅 정보 수신 동의 (선택)</label></div>
+        <button class="submit-btn" onclick="submitSignup()">회원가입 완료</button>
+        <div class="success-msg" id="signup-success">🎉 회원가입 완료! 가입 축하 쿠폰이 발송되었습니다.</div>
+        <p class="auth-switch">이미 회원이신가요? <a onclick="showPage('login')">로그인하기</a></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- LOGIN PAGE -->
+<div class="page" id="page-login">
+  <div class="auth-wrap">
+    <div class="auth-visual">
+      <div class="auth-visual-orb"></div>
+      <div class="auth-visual-emoji">💫</div>
+      <h2>다시 돌아오신<br>것을 환영합니다</h2>
+      <p>로그인하고 나만의 스킨케어 루틴과<br>특별 혜택을 확인하세요</p>
+    </div>
+    <div class="auth-form-wrap">
+      <div class="auth-form-inner">
+        <h2 class="auth-title">로그인</h2>
+        <p class="auth-sub">LUMIÈRE 계정으로 로그인하세요</p>
+        <div class="form-row"><label>이메일</label><input type="email" placeholder="email@example.com" id="l-email"></div>
+        <div class="form-row"><label>비밀번호</label><input type="password" placeholder="비밀번호" id="l-pw"></div>
+        <button class="submit-btn" onclick="submitLogin()">로그인</button>
+        <div class="success-msg" id="login-success">✅ 로그인 성공! 환영합니다.</div>
+        <p class="auth-switch">계정이 없으신가요? <a onclick="showPage('signup')">회원가입하기</a></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   DATA LAYER  (shared localStorage keys with admin.html)
+   ============================================================ */
+const PRODUCTS_KEY = 'lumiere_products';
+const HERO_KEY     = 'lumiere_hero';
+const NEWS_KEY     = 'lumiere_news';
+const TEXTS_KEY    = 'lumiere_texts';
+const MEMBERS_KEY  = 'lumiere_members';
+const REVIEWS_KEY  = 'lumiere_reviews';
+
+const DEFAULT_PRODUCTS = [
+  { id:1, name:'글로우 앰플 세럼', sub:'72시간 집중 수분 & 광채 부스터', cat:'스킨케어', badge:'BEST', price:68000, orig:89000, emoji:'✨', bg:'#FEF9F0', images:[], detail:'<h3>제품 특징</h3><p>히알루론산 5중 복합체로 피부 깊숙이 수분을 채워 72시간 촉촉함을 유지합니다.</p><ul><li>히알루론산 5중 복합체</li><li>나이아신아마이드 5%</li><li>비건 인증 성분</li></ul>' },
+  { id:2, name:'벨벳 립 틴트', sub:'12시간 지속 컬러 & 보습', cat:'메이크업', badge:'NEW', price:32000, orig:0, emoji:'💄', bg:'#FFF0F3', images:[], detail:'<h3>제품 특징</h3><p>부드러운 벨벳 질감으로 입술을 촉촉하게 가꿔주며 12시간 발색이 지속됩니다.</p>' },
+  { id:3, name:'클라우드 선크림 SPF50+', sub:'산뜻한 무기자차 & 수분 케어', cat:'선케어', badge:'BEST', price:45000, orig:0, emoji:'☁️', bg:'#F0F8FF', images:[], detail:'<h3>제품 특징</h3><p>SPF50+ PA++++ 자외선 차단과 동시에 피부에 수분을 공급합니다.</p>' },
+  { id:4, name:'실크 바디 로션', sub:'24시간 보습 & 피부 결 개선', cat:'바디케어', badge:'', price:39000, orig:0, emoji:'🌸', bg:'#FFF5EE', images:[], detail:'' },
+  { id:5, name:'퍼펙션 파운데이션', sub:'세미매트 피부 표현 & 커버리지', cat:'메이크업', badge:'', price:58000, orig:75000, emoji:'🌟', bg:'#FFFDF5', images:[], detail:'' },
+  { id:6, name:'딥 클렌징 폼', sub:'모공 케어 & 피지 조절', cat:'스킨케어', badge:'', price:28000, orig:0, emoji:'🫧', bg:'#F0FFF0', images:[], detail:'' },
+  { id:7, name:'헤어 트리트먼트 마스크', sub:'손상 모발 집중 케어 5in1', cat:'헤어케어', badge:'NEW', price:42000, orig:0, emoji:'💆', bg:'#F5F0FF', images:[], detail:'' },
+  { id:8, name:'스킨케어 스타터 세트', sub:'베스트 4종 구성 · 입문용', cat:'세트', badge:'SALE', price:89000, orig:145000, emoji:'🎁', bg:'#FFF8F0', images:[], detail:'' },
+];
+
+const DEFAULT_HERO = [
+  { tag:'New Collection', title:'빛나는 피부를 위한<br><em>매일의 의식</em>', desc:'피부과 전문의가 설계한 LUMIÈRE 스킨케어 루틴으로 당신의 아침을 시작하세요', emoji:'✨', bg:'radial-gradient(135deg,#1A1614,#2D2926)', image:'' },
+  { tag:'Best Seller', title:'72시간 지속되는<br><em>수분 혁명</em>', desc:'히알루론산 5중 복합체가 피부 깊숙이 스며들어 촉촉한 피부를 완성합니다', emoji:'💧', bg:'radial-gradient(135deg,#0D1F2D,#1A3040)', image:'' },
+  { tag:'Spring Collection', title:'봄을 닮은<br><em>생기있는 피부</em>', desc:'자연에서 얻은 원료와 첨단 기술의 만남, LUMIÈRE 스프링 에디션', emoji:'🌸', bg:'radial-gradient(135deg,#2D1A2A,#1A0D1F)', image:'' },
+];
+
+const DEFAULT_NEWS = [
+  { tag:'이벤트', date:'2025.03.15', title:'봄 신제품 론칭 기념 특별 할인 이벤트', emoji:'🌸', image:'' },
+  { tag:'뷰티 팁', date:'2025.03.10', title:'봄 환절기 피부 관리 완벽 가이드', emoji:'💧', image:'' },
+  { tag:'공지', date:'2025.03.05', title:'LUMIÈRE 리뉴얼 패키지 출시 안내', emoji:'📦', image:'' },
+];
+
+const DEFAULT_TEXTS = {
+  'txt-bestseller-tag': 'Best Sellers',
+  'txt-bestseller-title': '지금 가장 <em>사랑받는</em> 제품',
+  'txt-bestseller-sub': '피부과 전문의가 인정한 LUMIÈRE의 시그니처 라인',
+  'txt-curation-tag': 'My Skin Curation',
+  'txt-curation-title': '나만을 위한<br><em>스킨케어 루틴</em>',
+  'txt-curation-body': '피부 타입과 고민에 맞춰 전문가가 큐레이션한 나만의 루틴. 매일 반복되는 의식처럼, 피부를 가꾸는 시간을 특별하게 만들어드립니다.',
+  'txt-footer-desc': '빛나는 피부, 매일의 의식.\n자연과 과학이 만나 탄생한 프리미엄 화장품 브랜드',
+  'txt-footer-biz': '사업자 등록번호: 000-00-00000\n대표이사: 홍길동\n서울특별시 강남구 테헤란로 123',
+  'txt-footer-tel': '02-1234-5678',
+  'txt-footer-email': 'lumiere@beauty.co.kr',
+  'txt-marquee': 'FREE SHIPPING · VEGAN · CRUELTY FREE · DERMATOLOGIST TESTED · K-BEAUTY · LUMIÈRE BEAUTY',
+};
+
+function getProducts() {
+  const s = localStorage.getItem(PRODUCTS_KEY);
+  return s ? JSON.parse(s) : DEFAULT_PRODUCTS;
+}
+function saveProducts(p) { localStorage.setItem(PRODUCTS_KEY, JSON.stringify(p)); }
+
+function getHeroSlides() {
+  const s = localStorage.getItem(HERO_KEY);
+  return s ? JSON.parse(s) : DEFAULT_HERO;
+}
+function getNewsItems() {
+  const s = localStorage.getItem(NEWS_KEY);
+  return s ? JSON.parse(s) : DEFAULT_NEWS;
+}
+function getTexts() {
+  const s = localStorage.getItem(TEXTS_KEY);
+  return s ? { ...DEFAULT_TEXTS, ...JSON.parse(s) } : DEFAULT_TEXTS;
+}
+function getReviews() {
+  const s = localStorage.getItem(REVIEWS_KEY);
+  return s ? JSON.parse(s) : {};
+}
+
+/* ============================================================
+   MAIN SITE LOGIC
+   ============================================================ */
+let cart = JSON.parse(sessionStorage.getItem('lumiere_cart') || '[]');
+let currentPage = 'home';
+let prevPage = 'home';
+let currentFilter = '전체';
+let currentSort = 'popular';
+let currentDetailId = null;
+let slideIdx = 0;
+let slideTimer = null;
+
+// PAGE ROUTING
+function showPage(page, filter) {
+  prevPage = currentPage;
+  currentPage = page;
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  const el = document.getElementById('page-' + page);
+  if (el) el.classList.add('active');
+  window.scrollTo(0, 0);
+  if (page === 'home') initHome();
+  if (page === 'products') {
+    if (filter) setFilterByName(filter);
+    else renderAllProds();
+  }
+}
+
+function goBack() {
+  showPage(prevPage === 'detail' ? 'products' : (prevPage || 'products'));
+}
+
+function toggleMobile() {
+  document.getElementById('mobile-menu').classList.toggle('open');
+}
+
+// TOAST
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+// CART
+function toggleCart() {
+  document.getElementById('cart-drawer').classList.toggle('open');
+  document.getElementById('cart-overlay').classList.toggle('open');
+  renderCart();
+}
+
+function saveCart() { sessionStorage.setItem('lumiere_cart', JSON.stringify(cart)); }
+
+function renderCart() {
+  const el = document.getElementById('cart-items');
+  const footer = document.getElementById('cart-footer');
+  document.getElementById('cart-count').textContent = cart.reduce((s,c)=>s+c.qty,0);
+  if (!cart.length) {
+    el.innerHTML = '<p class="cart-empty">장바구니가 비어있습니다</p>';
+    footer.style.display = 'none';
+    return;
+  }
+  el.innerHTML = cart.map((item, i) => {
+    const imgHtml = item.image
+      ? `<img src="${item.image}" class="cart-item-img">`
+      : `<div class="cart-item-img">${item.emoji || '🧴'}</div>`;
+    return `<div class="cart-item">
+      ${imgHtml}
+      <div class="cart-item-info">
+        <div class="cart-item-name">${item.name}</div>
+        <div class="cart-item-price">₩${item.price.toLocaleString()}</div>
+        <div class="cart-item-qty">
+          <button class="qty-mini" onclick="changeCartQty(${i},-1)">−</button>
+          <span style="font-size:.75rem">${item.qty}</span>
+          <button class="qty-mini" onclick="changeCartQty(${i},1)">+</button>
+          <button class="cart-item-remove" onclick="removeCartItem(${i})">✕</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+  const total = cart.reduce((s,c) => s + c.price * c.qty, 0);
+  document.getElementById('cart-total').textContent = '₩' + total.toLocaleString();
+  footer.style.display = 'block';
+}
+
+function changeCartQty(i, d) {
+  cart[i].qty = Math.max(1, cart[i].qty + d);
+  saveCart(); renderCart();
+}
+
+function removeCartItem(i) {
+  cart.splice(i, 1);
+  saveCart(); renderCart();
+}
+
+function addToCart(prod) {
+  const imgs = prod.images || (prod.image ? [prod.image] : []);
+  const existing = cart.find(c => c.id === prod.id);
+  if (existing) existing.qty++;
+  else cart.push({ id: prod.id, name: prod.name, price: prod.price, qty: 1, image: imgs[0] || '', emoji: prod.emoji });
+  saveCart(); renderCart();
+  document.getElementById('cart-count').textContent = cart.reduce((s,c)=>s+c.qty,0);
+  showToast(`${prod.name}이(가) 장바구니에 담겼습니다 🛒`);
+}
+
+function addToCartDetail() {
+  const prods = getProducts();
+  const p = prods.find(x => x.id === currentDetailId);
+  if (!p) return;
+  const qty = parseInt(document.getElementById('qty-val').value) || 1;
+  const imgs = p.images || (p.image ? [p.image] : []);
+  const existing = cart.find(c => c.id === p.id);
+  if (existing) existing.qty += qty;
+  else cart.push({ id: p.id, name: p.name, price: p.price, qty, image: imgs[0] || '', emoji: p.emoji });
+  saveCart(); renderCart();
+  document.getElementById('cart-count').textContent = cart.reduce((s,c)=>s+c.qty,0);
+  showToast(`${p.name}이(가) 장바구니에 담겼습니다 🛒`);
+}
+
+function changeQty(d) {
+  const el = document.getElementById('qty-val');
+  el.value = Math.max(1, parseInt(el.value) + d);
+}
+
+function selectOpt(btn) {
+  const row = btn.closest('.opt-row');
+  row.querySelectorAll('.opt-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+// PRODUCT CARD HTML
+function prodCardHTML(p) {
+  const imgs = p.images || (p.image ? [p.image] : []);
+  const imgHtml = imgs[0]
+    ? `<img src="${imgs[0]}" alt="${p.name}" loading="lazy">`
+    : `<div class="prod-emoji-display">${p.emoji || '🧴'}</div>`;
+  const discount = p.orig ? Math.round((1 - p.price / p.orig) * 100) : 0;
+  const reviews = (getReviews()[p.id] || []);
+  const avg = reviews.length ? (reviews.reduce((s,r)=>s+r.star,0)/reviews.length).toFixed(1) : null;
+  return `<div class="prod-card" onclick="showDetail(${p.id})">
+    <div class="prod-img" style="background:${p.bg||'#FEF9F0'}">
+      ${imgHtml}
+      ${p.badge ? `<span class="prod-badge">${p.badge}</span>` : ''}
+    </div>
+    <div class="prod-info">
+      <div class="prod-cat">${p.cat}</div>
+      ${avg ? `<div class="prod-stars">${'★'.repeat(Math.round(avg))}${'☆'.repeat(5-Math.round(avg))} <span style="font-size:.6rem;color:var(--muted)">(${reviews.length})</span></div>` : ''}
+      <div class="prod-name">${p.name}</div>
+      <div class="prod-sub">${p.sub}</div>
+      <div class="prod-price-row">
+        <span class="prod-price">₩${p.price.toLocaleString()}</span>
+        ${p.orig ? `<span class="prod-orig">₩${p.orig.toLocaleString()}</span><span class="prod-disc">${discount}% 할인</span>` : ''}
+      </div>
+    </div>
+    <button class="prod-add" onclick="event.stopPropagation();addToCart(${JSON.stringify(p).replace(/"/g,'&quot;')})">장바구니 담기</button>
+  </div>`;
+}
+
+// HOME
+function initHome() {
+  renderHeroSlider();
+  renderMarquee();
+  renderHomeProds('전체');
+  renderNews();
+  applyTexts();
+}
+
+function renderHeroSlider() {
+  const slides = getHeroSlides();
+  const container = document.getElementById('hero-slides');
+  const dots = document.getElementById('hero-dots');
+  container.innerHTML = slides.map(s => {
+    const bgStyle = s.image
+      ? `style="background:${s.bg||'#1A1614'}"`
+      : `style="background:${s.bg||'radial-gradient(135deg,#1A1614,#2D2926)'}"`;
+    const imgEl = s.image ? `<div class="slide-bg"><img src="${s.image}" alt=""><div class="slide-overlay"></div></div>` : '';
+    return `<div class="hero-slide" ${bgStyle}>
+      ${imgEl}
+      <div class="slide-content">
+        <span class="slide-tag">${s.tag||''}</span>
+        ${!s.image ? `<span class="slide-emoji">${s.emoji||'✨'}</span>` : ''}
+        <h1 class="slide-title">${s.title||''}</h1>
+        <p class="slide-desc">${s.desc||''}</p>
+        <button class="slide-cta" onclick="showPage('products')">지금 쇼핑하기</button>
+      </div>
+    </div>`;
+  }).join('');
+  dots.innerHTML = slides.map((_,i) => `<div class="hero-dot ${i===0?'active':''}" onclick="goSlide(${i})"></div>`).join('');
+  slideIdx = 0;
+  clearInterval(slideTimer);
+  slideTimer = setInterval(() => changeSlide(1), 5000);
+}
+
+function changeSlide(dir) {
+  const slides = document.querySelectorAll('.hero-slide');
+  slideIdx = (slideIdx + dir + slides.length) % slides.length;
+  document.getElementById('hero-slides').style.transform = `translateX(-${slideIdx * 100}%)`;
+  document.querySelectorAll('.hero-dot').forEach((d,i) => d.classList.toggle('active', i === slideIdx));
+}
+
+function goSlide(i) { slideIdx = i - 1; changeSlide(1); clearInterval(slideTimer); slideTimer = setInterval(() => changeSlide(1), 5000); }
+
+function renderMarquee() {
+  const texts = getTexts();
+  const raw = texts['txt-marquee'] || 'LUMIÈRE BEAUTY · FREE SHIPPING · VEGAN · CRUELTY FREE';
+  const items = raw.split('·').map(t => t.trim()).filter(Boolean);
+  const track = document.getElementById('marquee-track');
+  const html = items.map(t => `<span class="marquee-item"><span>•</span>${t}</span>`).join('');
+  track.innerHTML = html + html; // duplicate for seamless loop
+}
+
+function renderHomeProds(cat) {
+  let prods = getProducts();
+  if (cat !== '전체') prods = prods.filter(p => p.cat === cat);
+  document.getElementById('home-prod-grid').innerHTML = prods.slice(0, 8).map(prodCardHTML).join('');
+}
+
+function filterHomeCat(btn, cat) {
+  document.querySelectorAll('.cat-pill').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderHomeProds(cat);
+}
+
+function renderNews() {
+  const news = getNewsItems();
+  document.getElementById('news-grid').innerHTML = news.map(n => {
+    const imgEl = n.image
+      ? `<div class="news-img"><img src="${n.image}" alt="${n.title}"></div>`
+      : `<div class="news-img" style="background:#F2EDE6">${n.emoji || '📰'}</div>`;
+    return `<div class="news-card">${imgEl}
+      <div class="news-body">
+        <div class="news-tag">${n.tag||''}</div>
+        <div class="news-title">${n.title||''}</div>
+        <div class="news-date">${n.date||''}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function applyTexts() {
+  const texts = getTexts();
+  Object.keys(texts).forEach(key => {
+    const el = document.getElementById(key);
+    if (el) el.innerHTML = texts[key];
+  });
+}
+
+// PRODUCTS PAGE
+function renderAllProds() {
+  let prods = getProducts();
+  if (currentFilter !== '전체') prods = prods.filter(p => p.cat === currentFilter);
+  if (currentSort === 'low')     prods = [...prods].sort((a,b) => a.price - b.price);
+  if (currentSort === 'high')    prods = [...prods].sort((a,b) => b.price - a.price);
+  if (currentSort === 'new')     prods = [...prods].sort((a,b) => b.id - a.id);
+  document.getElementById('prod-count').textContent = `전체 ${prods.length}개 제품`;
+  document.getElementById('all-prod-grid').innerHTML = prods.map(prodCardHTML).join('');
+}
+
+function setFilter(btn, cat) {
+  document.querySelectorAll('.filter-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  currentFilter = cat;
+  const titleMap = { '전체':'전체 제품', '스킨케어':'스킨케어', '메이크업':'메이크업', '바디케어':'바디케어', '헤어케어':'헤어케어', '선케어':'선케어', '세트':'기획 세트' };
+  document.getElementById('prod-page-title').textContent = titleMap[cat] || cat;
+  renderAllProds();
+}
+
+function setFilterByName(cat) {
+  currentFilter = cat;
+  document.querySelectorAll('.filter-tab').forEach(btn => {
+    const matches = btn.textContent.trim() === cat || (cat === '전체' && btn.textContent.trim() === '전체');
+    btn.classList.toggle('active', matches);
+  });
+  renderAllProds();
+}
+
+function sortProducts(val) {
+  currentSort = val;
+  renderAllProds();
+}
+
+// DETAIL PAGE
+function showDetail(id) {
+  const prods = getProducts();
+  const p = prods.find(x => x.id === id);
+  if (!p) return;
+  currentDetailId = id;
+  prevPage = currentPage;
+  currentPage = 'detail';
+  document.querySelectorAll('.page').forEach(pg => pg.classList.remove('active'));
+  document.getElementById('page-detail').classList.add('active');
+  window.scrollTo(0, 0);
+
+  const imgs = p.images || (p.image ? [p.image] : []);
+  const mainEl = document.getElementById('detail-main-img');
+  const thumbsEl = document.getElementById('detail-thumbs');
+
+  // Main image
+  if (imgs[0]) {
+    mainEl.innerHTML = `<img src="${imgs[0]}" alt="${p.name}" style="width:100%;height:100%;object-fit:cover">`;
+  } else {
+    mainEl.innerHTML = `<span style="font-size:6rem">${p.emoji || '🧴'}</span>`;
+    mainEl.style.background = p.bg || '#FEF9F0';
+  }
+
+  // Thumbnails
+  if (imgs.length > 1) {
+    thumbsEl.innerHTML = imgs.map((src, i) =>
+      `<div class="detail-thumb ${i===0?'active':''}" onclick="switchDetailImg(${i},${JSON.stringify(imgs).replace(/"/g,'&quot;')},this)">
+        <img src="${src}" alt="">
+      </div>`
+    ).join('');
+  } else {
+    thumbsEl.innerHTML = '';
+  }
+
+  document.getElementById('detail-cat').textContent = p.cat;
+  document.getElementById('detail-name-bc').textContent = p.name;
+  document.getElementById('detail-name').textContent = p.name;
+  document.getElementById('detail-sub').textContent = p.sub;
+  document.getElementById('detail-price').textContent = '₩' + p.price.toLocaleString();
+
+  const origEl = document.getElementById('detail-orig');
+  const discEl = document.getElementById('detail-disc');
+  if (p.orig) {
+    origEl.textContent = '₩' + p.orig.toLocaleString();
+    discEl.textContent = Math.round((1 - p.price / p.orig) * 100) + '% 할인';
+  } else {
+    origEl.textContent = '';
+    discEl.textContent = '';
+  }
+
+  // Reviews summary in header
+  const reviews = (getReviews()[id] || []);
+  const avg = reviews.length ? (reviews.reduce((s,r)=>s+r.star,0)/reviews.length) : 0;
+  document.getElementById('detail-stars').innerHTML =
+    `${'★'.repeat(Math.round(avg))}${'☆'.repeat(5-Math.round(avg))} <span style="color:var(--muted);font-size:.75rem">(${reviews.length}개 리뷰)</span>`;
+
+  document.getElementById('qty-val').value = 1;
+
+  // Detail content
+  const descEl = document.getElementById('detail-desc-content');
+  descEl.innerHTML = p.detail || '';
+
+  // Reviews section
+  renderDetailReviews(id, reviews);
+}
+
+function switchDetailImg(i, imgs, thumbEl) {
+  const mainEl = document.getElementById('detail-main-img');
+  mainEl.innerHTML = `<img src="${imgs[i]}" alt="" style="width:100%;height:100%;object-fit:cover">`;
+  document.querySelectorAll('.detail-thumb').forEach(t => t.classList.remove('active'));
+  thumbEl.classList.add('active');
+}
+
+function renderDetailReviews(prodId, reviews) {
+  const el = document.getElementById('detail-reviews-section');
+  if (!reviews.length) { el.innerHTML = ''; return; }
+  const avg = (reviews.reduce((s,r)=>s+r.star,0)/reviews.length).toFixed(1);
+  el.innerHTML = `<h3 style="font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:400;margin-bottom:1.2rem">고객 리뷰</h3>
+    <div class="rv-summary">
+      <div style="text-align:center">
+        <div class="rv-score-big">${avg}</div>
+        <div class="rv-stars-big">${'★'.repeat(Math.round(avg))}${'☆'.repeat(5-Math.round(avg))}</div>
+        <div class="rv-count">${reviews.length}개 리뷰</div>
+      </div>
+    </div>
+    ${reviews.map(rv => `<div class="rv-card">
+      <div class="rv-header"><span class="rv-name">${rv.name||'익명'}</span><span class="rv-date">${rv.date||''}</span></div>
+      <div class="rv-stars">${'★'.repeat(rv.star)}${'☆'.repeat(5-rv.star)}</div>
+      <div class="rv-text">${rv.text||''}</div>
+    </div>`).join('')}`;
+}
+
+// SIGNUP / LOGIN
+function toggleAll(cb) {
+  ['agree1','agree2','agree3'].forEach(id => document.getElementById(id).checked = cb.checked);
+}
+
+function submitSignup() {
+  const name  = document.getElementById('f-name').value.trim();
+  const email = document.getElementById('f-email').value.trim();
+  const pw    = document.getElementById('f-pw').value;
+  const pw2   = document.getElementById('f-pw2').value;
+  const a1    = document.getElementById('agree1').checked;
+  const a2    = document.getElementById('agree2').checked;
+  if (!name || !email) { showToast('이름과 이메일을 입력해주세요'); return; }
+  if (pw.length < 8)   { showToast('비밀번호는 8자 이상이어야 합니다'); return; }
+  if (pw !== pw2)      { showToast('비밀번호가 일치하지 않습니다'); return; }
+  if (!a1 || !a2)      { showToast('필수 약관에 동의해주세요'); return; }
+
+  const members = JSON.parse(localStorage.getItem(MEMBERS_KEY) || '[]');
+  if (members.find(m => m.email === email)) { showToast('이미 가입된 이메일입니다'); return; }
+  members.push({
+    name, email,
+    nick: document.getElementById('f-nick').value,
+    birth: document.getElementById('f-birth').value,
+    skin: document.getElementById('f-skin').value,
+    marketing: document.getElementById('agree3').checked,
+    joinDate: new Date().toISOString(),
+  });
+  localStorage.setItem(MEMBERS_KEY, JSON.stringify(members));
+  document.getElementById('signup-success').style.display = 'block';
+  setTimeout(() => showPage('home'), 2000);
+}
+
+function submitLogin() {
+  const email = document.getElementById('l-email').value.trim();
+  const pw    = document.getElementById('l-pw').value;
+  if (!email || !pw) { showToast('이메일과 비밀번호를 입력해주세요'); return; }
+  const members = JSON.parse(localStorage.getItem(MEMBERS_KEY) || '[]');
+  const m = members.find(x => x.email === email);
+  if (!m) { showToast('가입되지 않은 이메일입니다'); return; }
+  document.getElementById('login-success').style.display = 'block';
+  setTimeout(() => showPage('home'), 1500);
+}
+
+// INIT
+initHome();
+renderCart();
+</script>
+</body>
+</html>
